@@ -2,11 +2,28 @@
 
 const express = require('express');
 var bodyParser = require('body-parser');
-const {Client} = require('pg');
-const client = new Client();
+
+const isProduction = process.env.NODE_ENV === "production";
+const connectionString = `postgresql://${process.env.PGUSER}:${process.env.PGPASSWORD}@${process.env.PGHOST}:${process.env.PGPORT}/${process.env.PGDATABASE}`;
+
 require('dotenv').config();
-const cloudinary = require('cloudinary').v2
+const {Client} = require('pg');
+let client = null;
+if(isProduction) {
+  client = new Client({
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+      rejectUnauthorized: false,
+    },
+  });
+} else {
+  client = new Client({
+    connectionString: connectionString,
+  });
+}
 client.connect()
+
+const cloudinary = require('cloudinary').v2
 
 const PORT = process.env.PORT || 3001;
 
@@ -15,9 +32,6 @@ app.use(express.json({limit: '50mb'}));
 
 // create application/json parser
 var jsonParser = bodyParser.json()
- 
-// create application/x-www-form-urlencoded parser
-var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
