@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Fragment, useState} from 'react';
 import Box from '@mui/material/Box';
 import FormControl from '@mui/material/FormControl';
 import Input from '@mui/material/Input';
@@ -15,7 +15,17 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import moment from 'moment';
 
 export default function Register() {
-  const [values, setValues] = React.useState({});
+  const [values, setValues] = useState({
+    name: null,
+    dob: null,
+    phone_num: null,
+    email: null,
+    address: null,
+    photo_url: null,
+    appt_time: null,
+  });
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleFormChange = (key, value) => {
     setValues({...values, [key]: value});
@@ -41,15 +51,34 @@ export default function Register() {
 
   const sendData = async() => {
     console.log(values);
+    if(!Object.entries(values).every(([key, value]) => value)) {
+      setError('Please fill in all the fields before submitting!');
+      return;
+    }
     const response = await fetch('/submit', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(values)
+      body: JSON.stringify(values),
     });
     // waits until the request completes...
-    console.log(response);
+    const data = await response.json();
+    if(!data?.error && !!error) {
+      setFormSubmitted(true);
+      setValues({
+        name: null,
+        dob: null,
+        phone_num: null,
+        email: null,
+        address: null,
+        photo_url: null,
+        appt_time: null,
+      })
+      setError(null);
+    } else {
+      setError(data.error);
+    }
   }
 
   return (
@@ -78,112 +107,132 @@ export default function Register() {
           }}
         >
           <h2>Register</h2>
-          <FormControl>
-            <InputLabel htmlFor="name-outlined">Name</InputLabel>
-            <OutlinedInput
-              id="name-outlined"
-              onChange={(e) => handleFormChange('name', e.target.value)}
-              label="Name"
-              sx={{
-                marginBottom: '25px',
-              }}
-            />
-          </FormControl>
-          <FormControl sx={{marginBottom: '25px'}}>
-          <LocalizationProvider dateAdapter={DateAdapter}>
-            <DesktopDatePicker
-              label="Date of Birth"
-              inputFormat="MM/DD/yyyy"
-              value={values.dob || null}
-              onChange={(e) => handleFormChange('dob', moment(e).format('MM/DD/yyyy'))}
-              renderInput={(params) => <TextField {...params} />}
-            />
-          </LocalizationProvider>
-          </FormControl>
-          <FormControl>
-            <InputLabel htmlFor="phonenum-outlined">Phone Number</InputLabel>
-            <OutlinedInput
-              id="phonenum-outlined"
-              onChange={(e) => handleFormChange('phone_num', e.target.value)}
-              label="Phone Number"
-              sx={{
-                marginBottom: '25px',
-              }}
-            />
-          </FormControl>
-          <FormControl>
-            <InputLabel htmlFor="email-outlined">Email</InputLabel>
-            <OutlinedInput
-              id="email-outlined"
-              onChange={(e) => handleFormChange('email', e.target.value)}
-              label="Email"
-              sx={{
-                marginBottom: '25px',
-              }}
-            />
-          </FormControl>
-          <FormControl>
-            <InputLabel htmlFor="address-outlined">Address</InputLabel>
-            <OutlinedInput
-              id="address-outlined"
-              onChange={(e) => handleFormChange('address', e.target.value)}
-              label="Address"
-              sx={{
-                marginBottom: '25px',
-              }}
-            />
-          </FormControl>
-          <FormControl 
-            sx={{
-              marginBottom: '25px',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'flex-start'
-            }}
-          >
-            <Box 
-              sx={{
-                marginBottom: '5px', 
-                fontSize: '14px',
-                color: 'rgba(0, 0, 0, 0.6)',
+          {!formSubmitted ?
+            <>
+              <FormControl>
+                <InputLabel htmlFor="name-outlined">Name</InputLabel>
+                <OutlinedInput
+                  id="name-outlined"
+                  onChange={(e) => handleFormChange('name', e.target.value)}
+                  required
+                  label="Name"
+                  sx={{
+                    marginBottom: '25px',
+                  }}
+                />
+              </FormControl>
+              <FormControl sx={{marginBottom: '25px'}}>
+              <LocalizationProvider dateAdapter={DateAdapter}>
+                <DesktopDatePicker
+                  label="Date of Birth"
+                  inputFormat="MM/DD/yyyy"
+                  value={values.dob || null}
+                  onChange={(e) => handleFormChange('dob', moment(e).format('MM/DD/yyyy'))}
+                  renderInput={(params) => <TextField {...params} />}
+                />
+              </LocalizationProvider>
+              </FormControl>
+              <FormControl>
+                <InputLabel htmlFor="phonenum-outlined">Phone Number</InputLabel>
+                <OutlinedInput
+                  id="phonenum-outlined"
+                  onChange={(e) => handleFormChange('phone_num', e.target.value)}
+                  required
+                  label="Phone Number"
+                  sx={{
+                    marginBottom: '25px',
+                  }}
+                />
+              </FormControl>
+              <FormControl>
+                <InputLabel htmlFor="email-outlined">Email</InputLabel>
+                <OutlinedInput
+                  id="email-outlined"
+                  onChange={(e) => handleFormChange('email', e.target.value)}
+                  required
+                  label="Email"
+                  sx={{
+                    marginBottom: '25px',
+                  }}
+                />
+              </FormControl>
+              <FormControl>
+                <InputLabel htmlFor="address-outlined">Address</InputLabel>
+                <OutlinedInput
+                  id="address-outlined"
+                  onChange={(e) => handleFormChange('address', e.target.value)}
+                  required
+                  label="Address"
+                  sx={{
+                    marginBottom: '25px',
+                  }}
+                />
+              </FormControl>
+              <FormControl 
+                sx={{
+                  marginBottom: '25px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'flex-start'
+                }}
+              >
+                <Box 
+                  sx={{
+                    marginBottom: '5px', 
+                    fontSize: '14px',
+                    color: 'rgba(0, 0, 0, 0.6)',
 
-              }}
-            >
-              Photo ID
-            </Box>
-            <Input
-              accept="image/*"
-              style={{display: 'none'}}
-              id="contained-button-file"
-              onChange={uploadHandler}
-              type="file"
-            />
-            <label htmlFor="contained-button-file" style={{display: 'flex', alignItems: 'center'}}>
-              <Button variant="contained" component="span" sx={{marginRight: '5px'}}>
-                {`${values.photo_url ? 'Change Photo' : 'Upload'}`}
+                  }}
+                >
+                  Photo ID
+                </Box>
+                <Input
+                  accept="image/*"
+                  style={{display: 'none'}}
+                  id="contained-button-file"
+                  onChange={uploadHandler}
+                  type="file"
+                />
+                <label htmlFor="contained-button-file" style={{display: 'flex', alignItems: 'center'}}>
+                  <Button variant="contained" component="span" sx={{marginRight: '5px'}}>
+                    {`${values.photo_url ? 'Change Photo' : 'Upload'}`}
+                  </Button>
+                  {values.photo_url ? <CheckCircleIcon sx={{color: 'green'}} /> : null}
+                </label> 
+              </FormControl>
+              <FormControl>
+                <LocalizationProvider dateAdapter={DateAdapter}>
+                  <DateTimePicker
+                    label="Appointment Time"
+                    value={values.appt_time || null}
+                    onChange={(e) => handleFormChange('appt_time', moment(e).format('MM/DD/yyyy HH:mm'))}
+                    renderInput={(params) => <TextField {...params} />}
+                  />
+                </LocalizationProvider>
+              </FormControl>
+              {!!error ? <Box sx={{color: 'red'}}><h3>{error}</h3></Box> : null}
+              <Button 
+                variant="contained" 
+                onClick={sendData}
+                sx={{
+                  margin: '25px 0',
+                }}
+              >
+                Submit 
               </Button>
-              {values.photo_url ? <CheckCircleIcon sx={{color: 'green'}} /> : null}
-            </label> 
-          </FormControl>
-          <FormControl>
-            <LocalizationProvider dateAdapter={DateAdapter}>
-              <DateTimePicker
-                label="Appointment Time"
-                value={values.appt_time || null}
-                onChange={(e) => handleFormChange('appt_time', moment(e).format('MM/DD/yyyy HH:mm'))}
-                renderInput={(params) => <TextField {...params} />}
-              />
-            </LocalizationProvider>
-          </FormControl>
-          <Button 
-            variant="contained" 
-            onClick={sendData}
-            sx={{
-              margin: '25px 0',
-            }}
-          >
-            Submit
-          </Button>
+            </>
+          : 
+          <Box>
+            <h3>Thank you for submitting a form!</h3>
+            <Button 
+              variant="contained" 
+              onClick={() => setFormSubmitted(false)}
+              sx={{marginBottom: '35px'}}
+            >
+              Submit another form
+            </Button>
+          </Box>
+        }
         </Box>
       </Paper>
     </Box>

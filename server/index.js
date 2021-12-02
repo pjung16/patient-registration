@@ -65,7 +65,7 @@ app.post("/submit", jsonParser, async(req, res) => {
     console.log(err)
     res.status(500).json({error: 'Error adding patient to database.'})
   }
-  res.json({patient});
+  res.status(200).json({patient});
 });
 
 app.get("/submissions", async(req, res) => {
