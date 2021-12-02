@@ -32,10 +32,6 @@ app.use(express.json({limit: '50mb'}));
 const publicPath = path.join(__dirname, '..', './client/build');
 app.use(express.static(publicPath));
 
-app.get('*', (req, res) => {
-  res.sendFile(path.join(publicPath, 'index.html'));
-});
-
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
 });
@@ -47,7 +43,6 @@ app.post("/submit", jsonParser, async(req, res) => {
     const imgUpload = await cloudinary.uploader.upload(data.photo_url, {
       resource_type: 'image',
     })
-    console.log(imgUpload);
     data.photo_url = imgUpload.secure_url;
   } catch(err) {
     console.log(err)
@@ -80,4 +75,8 @@ app.get("/submissions", async(req, res) => {
       submissions: test.rows,
     }
   );
+});
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(publicPath, 'index.html'));
 });
