@@ -28,10 +28,12 @@ export default function Register() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  // form handler
   const handleFormChange = (key, value) => {
     setValues({...values, [key]: value});
   };
 
+  // convert image to Base64 to send to Cloudinary API in backend
   const toBase64 = (file) => new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -39,6 +41,7 @@ export default function Register() {
     reader.onerror = error => reject(error);
   });
 
+  // image upload handler
   const uploadHandler = async(event) => {
     if(event.target.files[0]) {
       const file = await toBase64(event.target.files[0])
@@ -48,13 +51,16 @@ export default function Register() {
     }
   }
 
+  // send data to backend
   const sendData = async() => {
     setLoading(true);
+    // check for any empty fields
     if(!Object.entries(values).every(([key, value]) => value)) {
       setError('Please fill in all the fields before submitting!');
       setLoading(false);
       return;
     }
+
     const response = await fetch('/submit', {
       method: 'POST',
       headers: {
@@ -62,8 +68,10 @@ export default function Register() {
       },
       body: JSON.stringify(values),
     });
+    
     // waits until the request completes...
     const data = await response.json();
+    // reset values and show that submission completed
     if(!data?.error || !error) {
       setFormSubmitted(true);
       setValues({
