@@ -1,5 +1,4 @@
-// server/index.js
-
+const path = require('path');
 const express = require('express');
 var bodyParser = require('body-parser');
 
@@ -23,15 +22,19 @@ if(isProduction) {
 }
 client.connect()
 
+var jsonParser = bodyParser.json()
 const cloudinary = require('cloudinary').v2
 
 const PORT = process.env.PORT || 3001;
-
 const app = express();
 app.use(express.json({limit: '50mb'}));
 
-// create application/json parser
-var jsonParser = bodyParser.json()
+const publicPath = path.join(__dirname, '..', './client/build');
+app.use(express.static(publicPath));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(publicPath, 'index.html'));
+});
 
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
