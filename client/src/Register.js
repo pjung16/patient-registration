@@ -104,7 +104,7 @@ export default function Register() {
             <InputLabel htmlFor="phonenum-outlined">Phone Number</InputLabel>
             <OutlinedInput
               id="phonenum-outlined"
-              onChange={(e) => handleFormChange('phone_number', e.target.value)}
+              onChange={(e) => handleFormChange('phone_num', e.target.value)}
               label="Phone Number"
               sx={{
                 marginBottom: '25px',

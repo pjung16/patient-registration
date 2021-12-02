@@ -81,6 +81,8 @@ export default function Admin() {
                     <Box className="content">{appt_time.get('date')} {appt_time.format('MMMM')} {appt_time.get('year')}</Box>
                     <Box className="label">Address</Box>
                     <Box className="content">{cur.address}</Box>
+                    <Box className="label">Phone Number</Box>
+                    <Box className="content">{cur.phone_num}</Box>
                     <Box className="label">Email Address</Box>
                     <Box className="content">{cur.email}</Box>
                   </Box>
