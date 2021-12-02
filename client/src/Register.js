@@ -130,7 +130,7 @@ export default function Register() {
                   label="Date of Birth"
                   inputFormat="MM/DD/yyyy"
                   value={values.dob || null}
-                  onChange={(e) => handleFormChange('dob', moment(e).format('MM/DD/yyyy'))}
+                  onChange={(e) => handleFormChange('dob', moment.utc(e).format())}
                   renderInput={(params) => <TextField {...params} />}
                 />
               </LocalizationProvider>
@@ -208,7 +208,7 @@ export default function Register() {
                   <DateTimePicker
                     label="Appointment Time"
                     value={values.appt_time || null}
-                    onChange={(e) => handleFormChange('appt_time', moment(e).format('MM/DD/yyyy HH:mm'))}
+                    onChange={(e) => handleFormChange('appt_time', moment.utc(e).format())}
                     renderInput={(params) => <TextField {...params} />}
                   />
                 </LocalizationProvider>

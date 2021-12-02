@@ -74,6 +74,7 @@ export default function Admin() {
                         }}
                       >
                         <Box className="label">Date of Birth</Box>
+                        {console.log(dob)}
                         <Box className="content">{dob.format('MMMM DD yyyy')}</Box>
                       </Box>
                     </Box>
