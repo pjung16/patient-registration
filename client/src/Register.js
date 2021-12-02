@@ -1,6 +1,7 @@
 import React from 'react';
 import Box from '@mui/material/Box';
 import FormControl from '@mui/material/FormControl';
+import Input from '@mui/material/Input';
 import InputLabel from '@mui/material/InputLabel';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import TextField from '@mui/material/TextField';
@@ -9,21 +10,34 @@ import DateAdapter from '@mui/lab/AdapterMoment';
 import DesktopDatePicker from '@mui/lab/DesktopDatePicker';
 import DateTimePicker from '@mui/lab/DateTimePicker';
 import Button from '@mui/material/Button';
-import moment from 'moment';
 import { Paper } from '@mui/material';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import moment from 'moment';
 
 export default function Register() {
-  const [value, setValue] = React.useState(new Date('2014-08-18T21:11:54'));
   const [values, setValues] = React.useState({});
-
-  const handleChange = (newValue) => {
-    setValue(newValue);
-  };
 
   const handleFormChange = (key, value) => {
     setValues({...values, [key]: value});
     console.log({...values, [key]: value});
   };
+
+  const toBase64 = (file) => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
+  });
+
+  const uploadHandler = async(event) => {
+    console.log(event.target.files[0]);
+    if(event.target.files[0]) {
+      const file = await toBase64(event.target.files[0])
+      setValues({...values, photo_url: file});
+    } else {
+      setValues({...values, photo_url: null});
+    }
+  }
 
   const sendData = async() => {
     console.log(values);
@@ -51,7 +65,8 @@ export default function Register() {
         sx={{
           padding: '15px 50px', 
           maxWidth: '500px', 
-          width: '100%'
+          width: '100%',
+          marginBottom: '50px',
         }}
       >
         <Box 
@@ -79,7 +94,7 @@ export default function Register() {
             <DesktopDatePicker
               label="Date of Birth"
               inputFormat="MM/DD/yyyy"
-              value={values.dob}
+              value={values.dob || null}
               onChange={(e) => handleFormChange('dob', moment(e).format('MM/DD/yyyy'))}
               renderInput={(params) => <TextField {...params} />}
             />
@@ -118,26 +133,43 @@ export default function Register() {
               }}
             />
           </FormControl>
-          <FormControl sx={{marginBottom: '25px'}}>
-            <div>Photo ID</div>
-            <input
+          <FormControl 
+            sx={{
+              marginBottom: '25px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'flex-start'
+            }}
+          >
+            <Box 
+              sx={{
+                marginBottom: '5px', 
+                fontSize: '14px',
+                color: 'rgba(0, 0, 0, 0.6)',
+
+              }}
+            >
+              Photo ID
+            </Box>
+            <Input
               accept="image/*"
-              style={{ display: 'none' }}
-              id="raised-button-file"
-              multiple
+              style={{display: 'none'}}
+              id="contained-button-file"
+              onChange={uploadHandler}
               type="file"
             />
-            <label htmlFor="raised-button-file">
-              <Button variant="raised" component="span">
-                Upload
+            <label htmlFor="contained-button-file" style={{display: 'flex', alignItems: 'center'}}>
+              <Button variant="contained" component="span" sx={{marginRight: '5px'}}>
+                {`${values.photo_url ? 'Change Photo' : 'Upload'}`}
               </Button>
+              {values.photo_url ? <CheckCircleIcon sx={{color: 'green'}} /> : null}
             </label> 
           </FormControl>
           <FormControl>
             <LocalizationProvider dateAdapter={DateAdapter}>
               <DateTimePicker
                 label="Appointment Time"
-                value={values.appt_time}
+                value={values.appt_time || null}
                 onChange={(e) => handleFormChange('appt_time', moment(e).format('MM/DD/yyyy HH:mm'))}
                 renderInput={(params) => <TextField {...params} />}
               />

@@ -15,7 +15,13 @@ export default function Admin() {
   }, []);
 
   return (
-    <Box sx={{padding: '15px 100px'}}>
+    <Box sx={{
+        padding: '15px 100px',
+        '@media screen and (max-width: 600px)': {
+          padding: '15px 25px',
+        },
+      }}
+    >
       <h2>Admin</h2>
       <Grid container spacing={2}>
         {submissions.map((cur) => {
