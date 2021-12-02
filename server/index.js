@@ -19,11 +19,11 @@ if(isProduction) {
   client = new Client({
     connectionString: connectionString,
   });
-}
-client.connect()
+};
+client.connect();
 
-var jsonParser = bodyParser.json()
-const cloudinary = require('cloudinary').v2
+var jsonParser = bodyParser.json();
+const cloudinary = require('cloudinary').v2;
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -47,7 +47,7 @@ app.post("/submit", jsonParser, async(req, res) => {
   } catch(err) {
     console.log(err)
     res.status(500).json(({error: 'Error uploading image.'}))
-  }
+  };
   try {
     const text = 'INSERT INTO patients(name, dob, phone_num, email, address, photo_url, appt_time) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *'
     const values = [
@@ -64,15 +64,15 @@ app.post("/submit", jsonParser, async(req, res) => {
   } catch(err) {
     console.log(err)
     res.status(500).json({error: 'Error adding patient to database.'})
-  }
-  res.status(200).json({patient});
+  };
+  res.json({patient});
 });
 
 app.get("/submissions", async(req, res) => {
-  const test = await client.query('SELECT * FROM patients')
+  const data = await client.query('SELECT * FROM patients')
   res.json(
     {
-      submissions: test.rows,
+      submissions: data.rows,
     }
   );
 });

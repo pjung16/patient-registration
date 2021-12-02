@@ -30,7 +30,6 @@ export default function Register() {
 
   const handleFormChange = (key, value) => {
     setValues({...values, [key]: value});
-    console.log({...values, [key]: value});
   };
 
   const toBase64 = (file) => new Promise((resolve, reject) => {
@@ -41,7 +40,6 @@ export default function Register() {
   });
 
   const uploadHandler = async(event) => {
-    console.log(event.target.files[0]);
     if(event.target.files[0]) {
       const file = await toBase64(event.target.files[0])
       setValues({...values, photo_url: file});
