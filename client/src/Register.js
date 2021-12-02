@@ -26,6 +26,7 @@ export default function Register() {
   });
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleFormChange = (key, value) => {
     setValues({...values, [key]: value});
@@ -50,9 +51,10 @@ export default function Register() {
   }
 
   const sendData = async() => {
-    console.log(values);
+    setLoading(true);
     if(!Object.entries(values).every(([key, value]) => value)) {
       setError('Please fill in all the fields before submitting!');
+      setLoading(false);
       return;
     }
     const response = await fetch('/submit', {
@@ -79,6 +81,7 @@ export default function Register() {
     } else {
       setError(data.error);
     }
+    setLoading(false);
   }
 
   return (
@@ -214,6 +217,7 @@ export default function Register() {
               <Button 
                 variant="contained" 
                 onClick={sendData}
+                disabled={!!loading}
                 sx={{
                   margin: '25px 0',
                 }}

@@ -74,11 +74,11 @@ export default function Admin() {
                         }}
                       >
                         <Box className="label">Date of Birth</Box>
-                        <Box className="content">{dob.get('date')} {dob.format('MMMM')} {dob.get('year')}</Box>
+                        <Box className="content">{dob.format('MMMM DD yyyy')}</Box>
                       </Box>
                     </Box>
                     <Box className="label">Appointment Date & Time</Box>
-                    <Box className="content">{appt_time.get('date')} {appt_time.format('MMMM')} {appt_time.get('year')}</Box>
+                    <Box className="content">{appt_time.format('MMMM DD yyyy | HH:mm')}</Box>
                     <Box className="label">Address</Box>
                     <Box className="content">{cur.address}</Box>
                     <Box className="label">Phone Number</Box>
