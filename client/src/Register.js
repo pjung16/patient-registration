@@ -66,7 +66,7 @@ export default function Register() {
     });
     // waits until the request completes...
     const data = await response.json();
-    if(!data?.error && !!error) {
+    if(!data?.error || !error) {
       setFormSubmitted(true);
       setValues({
         name: null,
